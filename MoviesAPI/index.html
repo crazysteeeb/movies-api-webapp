@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        Author: Steve Ward
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie API</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready( () => {
+            //view the configuration of base url for the API. Log the info so we can view it in the network tab.
+            $.get('https://api.themoviedb.org/3/configuration?api_key=bce9a5a8b27f82777bff31af84c269d2',function(response){console.log(response)});
+            //Connect to the now playing api with the api_key 
+        $.ajax({url: "https://api.themoviedb.org/3/discover/movie?api_key=bce9a5a8b27f82777bff31af84c269d2&include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_release_type=2|3&release_date.gte={min_date}&release_date.lte={max_date}", success: function(result){
+                    //Loop through the return data 3 times
+                    for(var i = 0; i < 3; i++){
+                        //use the parameter given and the returned results to instantiate each variable I want to use with the data from the API
+                        var movie = result.results[i];
+                        var title = movie.title;
+                        var overview = movie.overview;
+                        //Using the base URL and the size of poster I choose add the end path of the img from the API
+                        var img = "https://image.tmdb.org/t/p/w185" + movie.poster_path;
+                        //using jquery create each tag use the text to place the data in the tag we are creating and assign ID
+                        var h1 = $('<h1></h1>').text(title).attr('id','movie'+ i);
+                        var p = $('<p></p>').text(overview).attr('id','desc' + i).hide();
+                        //When adding attribute to the image need to put the path for the image for each on the source
+                        var img = $('<img>').attr('src',img).attr('id', 'img' + i);
+                        //Append all the items to my div
+                        $('#movies').append(h1,p,img);
+
+                    }
+                    //using Jquery create click event for the h1 tag
+                    $('h1').click(function(event)
+                    {
+                        //toggle between the p tag and the img tag
+                        $(this).next('p').toggle();
+                        $(this).next('p').next('img').toggle();
+                    }) 
+                    
+                }
+            });
+        
+        });
+    </script>
+</head>
+<body>
+    <!--Area for the movies to be placed-->
+    <div id="movies"></div>
+</body>
+</html>
